@@ -5,7 +5,7 @@ import re
 import numpy as np
 from scene_funcs import scene_extract, ksd, review_extract
 from pprint import pprint
-import scipy
+from scipy.interpolate import UnivariateSpline
 
 def print_side_by_side(a, b, size=30, space=4):
     while a or b:
@@ -92,13 +92,12 @@ if __name__ == '__main__':
 
     print(reviews, ksdlist)
 
-    def func(x):
-        return x
+    # s = UnivariateSpline(sorted(ksdlist), sorted(reviews), s=20)
+    # xs = np.linspace(0, len(ksdlist), 10)
+    # ys = s(xs)
 
-
-    popt, pcov = scipy.optimize.curve_fit(func, ksdlist, reviews)
-
-    plt.scatter(    , reviews)
+    plt.scatter(ksdlist,reviews)
+    # plt.plot(xs, ys)
     plt.title("KSD vs Review Difference")
     plt.xlabel('KSD Score')
     plt.ylabel('Review Difference')
