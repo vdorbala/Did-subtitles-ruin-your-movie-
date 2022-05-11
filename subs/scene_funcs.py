@@ -7,6 +7,14 @@ from collections import defaultdict
 from tqdm import tqdm
 from pprint import pprint
 import translationese
+import pandas as pd
+import string
+
+
+def compare(s1, s2):
+    remove = string.punctuation + string.whitespace
+    mapping = {ord(c): None for c in remove}
+    return s1.translate(mapping) == s2.translate(mapping)
 
 
 def print_side_by_side(s1, s2, size=50, space=4):
@@ -140,11 +148,15 @@ def ksd(df, REQ_SENTS, movie):
 
 	lexicals = (max_ttr+max_harden)/2
 
+
 	## Final Score
 	ksd = l1*senti_transfer + l2*lexicals
 
-	return ksd
+	# print(l1, senti_transfer)
+	# print(l2, lexicals)
 
+	## For plotting side by side! - Half works!
+	
 	# for s1, s2 in zip(req_scenes_max[REQ_SENTS[0]], req_scenes_max[REQ_SENTS[1]]):
 	# 	for idx, line in enumerate(s1):
 	# 		print_side_by_side(str(s1[idx]), str(s2[idx]))
@@ -152,6 +164,22 @@ def ksd(df, REQ_SENTS, movie):
 	# for s1, s2 in zip(req_scenes_min[REQ_SENTS[0]], req_scenes_min[REQ_SENTS[1]]):
 	# 	for idx, line in enumerate(s1):
 	# 		print_side_by_side(str(s1[idx]), str(s2[idx]))
+
+	return ksd
+
+def review_extract(movielist, review_file='final_movies_list_F.csv'):
+
+	data = pd.read_csv(review_file)
+	difflist = []
+
+	for movie in movielist:
+		for title in data['primaryTitle']:
+			if compare(str(movie), str(title)):
+				row = data.loc[(data['primaryTitle'] == title)]
+				difflist.append(float(row['diff'].iloc[0]))
+				break
+
+	return difflist
 
 
 if __name__ == '__main__':

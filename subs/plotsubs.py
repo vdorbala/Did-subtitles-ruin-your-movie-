@@ -3,8 +3,9 @@ import pandas
 import matplotlib.pyplot as plt
 import re
 import numpy as np
-from scene_funcs import scene_extract, ksd
+from scene_funcs import scene_extract, ksd, review_extract
 from pprint import pprint
+import scipy
 
 def print_side_by_side(a, b, size=30, space=4):
     while a or b:
@@ -69,7 +70,7 @@ if __name__ == '__main__':
 
 
     # Choose from en, fr, en-fr, fr-en
-    REQ_SENTS = ['en', 'fr-en']
+    REQ_SENTS = ['en', 'fr']
 
     movielist = ['Adam', 'Americano', 'Another Happy Day', 'Birth', 'Bubble', 'Camping', 'Carancho', 'Dark Places', 'Fighting', 'Gabrielle', 'Golden Door', 
     'GoldenEye', 'Hector', 'Hitchcock', 'JFK', 'Jackie', 'Margaret', 'Mr Nobody', 'Paranoid Park', 'Paranormal Activity', 'Smiley Face', 'Stone', 'Supernova', 'The Bubble', 'Trainspotting', 'Yamakasi']
@@ -77,10 +78,28 @@ if __name__ == '__main__':
     # ['Adam', 'Americano', 'Another Happy Day', 'Birth', 'Bubble', 'Camping', 'Carancho', 'Dark Places', 'Fighting', 'Gabrielle', 'Golden Door', 
     #'GoldenEye', 'Hector', 'Hitchcock', 'JFK', 'Jackie', 'Margaret', 'Mr Nobody', 'Paranoid Park', 'Paranormal Activity', 'Smiley Face', 'Stone', 'Supernova', 'The Bubble', 'Trainspotting', 'Yamakasi']
     
-    SET_MOVIES = ['Adam']
-    PLOT = True
+    SET_MOVIES = ['Gabrielle', 'Paranormal Activity']
+    PLOT = False
 
-    for movie in SET_MOVIES:
+    reviews = review_extract(movielist)
+
+    ksdlist = []
+
+    for movie in movielist:
         df = main(movie)
 
-        ksd(df, REQ_SENTS, movie)
+        ksdlist.append(ksd(df, REQ_SENTS, movie))
+
+    print(reviews, ksdlist)
+
+    def func(x):
+        return x
+
+
+    popt, pcov = scipy.optimize.curve_fit(func, ksdlist, reviews)
+
+    plt.scatter(    , reviews)
+    plt.title("KSD vs Review Difference")
+    plt.xlabel('KSD Score')
+    plt.ylabel('Review Difference')
+    plt.show()

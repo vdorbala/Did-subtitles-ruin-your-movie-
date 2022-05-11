@@ -18,7 +18,7 @@ def getinfo(formats,movie):
     df["hardendiff"] = (df1[2]-df2[2]).abs()
     ttr = df["ttrdiff"].max()
     harden = df["hardendiff"].max()
-    print(ttr,harden)
+    # print(ttr,harden)
     return ttr,harden
     
 # getinfo(["fr",'en'],"Adam")
