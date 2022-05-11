@@ -8,11 +8,25 @@ from tqdm import tqdm
 from pprint import pprint
 
 
-def print_side_by_side(a, b, size=30, space=4):
-    while a or b:
-        pprint(a[:size].ljust(size) + " " * space + b[:size])
-        a = a[size:]
-        b = b[size:]
+def print_side_by_side(s1, s2, size=50, space=4):
+    # while a or b:
+    #     pprint(a[:size].ljust(size) + " " * space + b[:size])
+    #     a = a[size:]
+    #     b = b[size:]
+
+    maxChars = 50
+    maxLength = max(len(s1),len(s2))
+
+    s1 = s1.ljust(maxLength," ")
+    s2 = s2.ljust(maxLength," ")
+
+    s1 = [s1[i:i+maxChars] for i in range(0,len(s1),maxChars)]
+    s2 = [s2[i:i+maxChars] for i in range(0,len(s2),maxChars)]
+
+    for elem1, elem2 in zip(s1,s2):
+        print(elem1.ljust(maxChars," "), end="    ")
+        print(elem2)
+
 
 def scene_extract(SEL_MOVIE, SEL_SCENE, SUBLIST, write_file = False, stats=False):
 
@@ -62,6 +76,13 @@ def scene_extract(SEL_MOVIE, SEL_SCENE, SUBLIST, write_file = False, stats=False
 
 def ksd(df, REQ_SENTS, movie):
 
+	## SENTIMENT PART
+
+	m = 1 # Worst Scenes 
+	n = 1 # Best Scenes
+	l1 = 0.5 # Sentiment weight
+	l2 = 0.5 # Translationese weight
+
 	diff = df.diff()
 	maxidx = diff.abs().idxmax(axis=1)
 	max_scene = int(maxidx[-1])
@@ -86,8 +107,50 @@ def ksd(df, REQ_SENTS, movie):
 	    pprint(req_scenes_min[key])
 
 	print('\n')
-	print_side_by_side(str(req_scenes_max[REQ_SENTS[0]]), str(req_scenes_max[REQ_SENTS[1]]))
-	print_side_by_side(str(req_scenes_min[REQ_SENTS[0]]), str(req_scenes_min[REQ_SENTS[1]]))
+
+
+	req_max_list = []
+	req_min_list = []
+
+	maxids = list(diff.abs().T.iloc[:,-1].nlargest(m).index)
+	minids = list(diff.abs().T.iloc[:,-1].nsmallest(n).index)
+
+	for i in range(m):
+		max_scene = maxids[i]
+
+		req_max_list.append(diff.loc[REQ_SENTS[1]][max_scene])
+
+	for i in range(n):
+		min_scene = minids[i]
+
+		req_min_list.append(diff.loc[REQ_SENTS[1]][min_scene])
+
+
+	difflist = list(diff.loc[REQ_SENTS[1]][:])
+	avg_sent = sum(list(diff.loc[REQ_SENTS[1]][:]))/len(difflist)
+
+	# print(avg_sent, sum(req_max_list)/m, sum(req_min_list)/n, (sum(req_max_list) + sum(req_min_list))/(m+n))
+
+	senti_transfer = max(avg_sent, (sum(req_max_list) + sum(req_min_list))/(m+n))
+
+	## Translationese PART
+
+
+
+
+
+	## Final Score
+	ksd = l1*senti_transfer + l2*translationese
+
+	return ksd
+
+	# for s1, s2 in zip(req_scenes_max[REQ_SENTS[0]], req_scenes_max[REQ_SENTS[1]]):
+	# 	for idx, line in enumerate(s1):
+	# 		print_side_by_side(str(s1[idx]), str(s2[idx]))
+
+	# for s1, s2 in zip(req_scenes_min[REQ_SENTS[0]], req_scenes_min[REQ_SENTS[1]]):
+	# 	for idx, line in enumerate(s1):
+	# 		print_side_by_side(str(s1[idx]), str(s2[idx]))
 
 
 if __name__ == '__main__':

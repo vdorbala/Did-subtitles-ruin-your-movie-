@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
 
     # Choose from en, fr, en-fr, fr-en
-    REQ_SENTS = ['en', 'fr']
+    REQ_SENTS = ['en', 'fr-en']
 
     movielist = ['Adam', 'Americano', 'Another Happy Day', 'Birth', 'Bubble', 'Camping', 'Carancho', 'Dark Places', 'Fighting', 'Gabrielle', 'Golden Door', 
     'GoldenEye', 'Hector', 'Hitchcock', 'JFK', 'Jackie', 'Margaret', 'Mr Nobody', 'Paranoid Park', 'Paranormal Activity', 'Smiley Face', 'Stone', 'Supernova', 'The Bubble', 'Trainspotting', 'Yamakasi']
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # ['Adam', 'Americano', 'Another Happy Day', 'Birth', 'Bubble', 'Camping', 'Carancho', 'Dark Places', 'Fighting', 'Gabrielle', 'Golden Door', 
     #'GoldenEye', 'Hector', 'Hitchcock', 'JFK', 'Jackie', 'Margaret', 'Mr Nobody', 'Paranoid Park', 'Paranormal Activity', 'Smiley Face', 'Stone', 'Supernova', 'The Bubble', 'Trainspotting', 'Yamakasi']
     
-    SET_MOVIES = ['JFK']
+    SET_MOVIES = ['Adam']
     PLOT = True
 
     for movie in SET_MOVIES:
