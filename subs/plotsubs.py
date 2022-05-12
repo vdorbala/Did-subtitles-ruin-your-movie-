@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
 
     # Choose from en, fr, en-fr, fr-en
-    REQ_SENTS = ['en', 'fr']
+    REQ_SENTS = ['en', 'fr-en']
 
     movielist = ['Adam', 'Americano', 'Another Happy Day', 'Birth', 'Bubble', 'Camping', 'Carancho', 'Dark Places', 'Fighting', 'Gabrielle', 'Golden Door', 
     'GoldenEye', 'Hector', 'Hitchcock', 'JFK', 'Jackie', 'Margaret', 'Mr Nobody', 'Paranoid Park', 'Paranormal Activity', 'Smiley Face', 'Stone', 'Supernova', 'The Bubble', 'Trainspotting', 'Yamakasi']
@@ -78,27 +78,28 @@ if __name__ == '__main__':
     # ['Adam', 'Americano', 'Another Happy Day', 'Birth', 'Bubble', 'Camping', 'Carancho', 'Dark Places', 'Fighting', 'Gabrielle', 'Golden Door', 
     #'GoldenEye', 'Hector', 'Hitchcock', 'JFK', 'Jackie', 'Margaret', 'Mr Nobody', 'Paranoid Park', 'Paranormal Activity', 'Smiley Face', 'Stone', 'Supernova', 'The Bubble', 'Trainspotting', 'Yamakasi']
     
-    SET_MOVIES = ['Gabrielle', 'Paranormal Activity']
+    SET_MOVIES = ['Gabrielle', 'Paranormal Activity', 'JFK']
     PLOT = False
 
     reviews = review_extract(movielist)
 
     ksdlist = []
 
-    for movie in movielist:
+    for movie in SET_MOVIES:
         df = main(movie)
+        ksd(df, REQ_SENTS, movie)
 
-        ksdlist.append(ksd(df, REQ_SENTS, movie))
+    #     ksdlist.append(ksd(df, REQ_SENTS, movie))
 
-    print(reviews, ksdlist)
+    # print(reviews, ksdlist)
 
-    # s = UnivariateSpline(sorted(ksdlist), sorted(reviews), s=20)
-    # xs = np.linspace(0, len(ksdlist), 10)
-    # ys = s(xs)
+    # # s = UnivariateSpline(sorted(ksdlist), sorted(reviews), s=20)
+    # # xs = np.linspace(0, len(ksdlist), 10)
+    # # ys = s(xs)
 
-    plt.scatter(ksdlist,reviews)
-    # plt.plot(xs, ys)
-    plt.title("KSD vs Review Difference")
-    plt.xlabel('KSD Score')
-    plt.ylabel('Review Difference')
-    plt.show()
+    # plt.scatter(ksdlist,reviews)
+    # # plt.plot(xs, ys)
+    # plt.title("KSD vs Review Difference")
+    # plt.xlabel('KSD Score')
+    # plt.ylabel('Review Difference')
+    # plt.show()

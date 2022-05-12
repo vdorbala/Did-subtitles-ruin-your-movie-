@@ -94,28 +94,28 @@ def ksd(df, REQ_SENTS, movie):
 
 	diff = df.diff()
 	maxidx = diff.abs().idxmax(axis=1)
-	max_scene = int(maxidx[-1])
+	max_scene = 17#int(maxidx[-1])
 
 	minidx = diff.abs().idxmin(axis=1)
 	min_scene = int(minidx[-1])
 
-	# print("WORST - Scene with maximum sentiment disparity ({} , {}) of {} is {}.".format(df.loc["{}".format(REQ_SENTS[0])][max_scene], df.loc["{}".format(REQ_SENTS[1])][max_scene], diff.loc[REQ_SENTS[1]][max_scene], max_scene))
+	print("WORST - Scene with maximum sentiment disparity ({} , {}) of {} is {}.".format(df.loc["{}".format(REQ_SENTS[0])][max_scene], df.loc["{}".format(REQ_SENTS[1])][max_scene], diff.loc[REQ_SENTS[1]][max_scene], max_scene))
 
-	# print("BEST - Scene with minimum sentiment disparity ({} , {})  of {} is {}.".format(df.loc["{}".format(REQ_SENTS[0])][min_scene], df.loc["{}".format(REQ_SENTS[1])][min_scene], diff.loc[REQ_SENTS[1]][min_scene], min_scene))
+	print("BEST - Scene with minimum sentiment disparity ({} , {})  of {} is {}.".format(df.loc["{}".format(REQ_SENTS[0])][min_scene], df.loc["{}".format(REQ_SENTS[1])][min_scene], diff.loc[REQ_SENTS[1]][min_scene], min_scene))
 
-	# req_scenes_max = scene_extract(movie, max_scene, REQ_SENTS, write_file=False, stats=False)
+	req_scenes_max = scene_extract(movie, max_scene, REQ_SENTS, write_file=False, stats=False)
 
-	# for key in req_scenes_max.keys():
-	#     print("\nWorst performing {} script for scene {} is \n".format(key, max_scene))
-	#     pprint(req_scenes_max[key])
+	for key in req_scenes_max.keys():
+	    print("\nWorst performing {} script for scene {} is \n".format(key, max_scene))
+	    pprint(req_scenes_max[key])
 
-	# req_scenes_min = scene_extract(movie, min_scene, REQ_SENTS, write_file=False, stats=False)
+	req_scenes_min = scene_extract(movie, min_scene, REQ_SENTS, write_file=False, stats=False)
 
-	# for key in req_scenes_min.keys():
-	#     print("\nBest performing {} script for scene {} is \n".format(key, min_scene))
-	#     pprint(req_scenes_min[key])
+	for key in req_scenes_min.keys():
+	    print("\nBest performing {} script for scene {} is \n".format(key, min_scene))
+	    pprint(req_scenes_min[key])
 
-	# print('\n')
+	print('\n')
 
 
 	req_max_list = []

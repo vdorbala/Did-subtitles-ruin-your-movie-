@@ -5,45 +5,115 @@ import string
 import pdb
 from collections import defaultdict
 
+import bisect
+import re
+
 def compare(s1, s2):
     remove = string.punctuation + string.whitespace
     mapping = {ord(c): None for c in remove}
     return s1.translate(mapping) == s2.translate(mapping)
 
-movie_list = pandas.read_csv('final_movies_list_F.csv')
-imdb_id_file = pandas.read_csv('overlapping.csv')
+data = pandas.read_csv('True_List.csv')
 
-imdb_id = list(imdb_id_file['IMDB-number'])
-titles = list(imdb_id_file['Title'])
+movie_list = data["primaryTitle"].to_list()
 
-sel_movie_list = pandas.read_csv('final_movies_list_F.csv')
-sel_movie_list = list(sel_movie_list['primaryTitle'])
+# pdb.set_trace()
 
-final_list = []
+en_file = open('OpenSubtitles.en-fr.en')
+fr_file = open('OpenSubtitles.en-fr.fr')
 
-for movie in sel_movie_list:
-    for idx, ref_movie in enumerate(titles):
-        if compare(movie, ref_movie):
-            final_list.append((movie,imdb_id[idx]))
+fr_lines = fr_file.readlines()
+en_lines = en_file.readlines()
 
-pdb.set_trace()
-
+print("Finished reading OpenSubtitles data!")
 
 linedict = defaultdict(list)
 movielist = []
-with open('OpenSubtitles.en-fr.ids', 'rt') as f:
-    for idx, movie in enumerate(final_list):
+
+with open('OpenSubtitles.en-fr.ids', 'r') as file:
+    content = file.read()
+# match = re.search('random', content)
+
+print("Finished reading ID file!")
+
+movie_count = 0
+
+while movie_count <= 71:
+
+        movie = np.random.choice(movie_list)
+        
         if movie in movielist:
             continue
-        print(movie)
+
+        if "/" in movie:
+            continue
+
+
+        movie_count +=1
+        print("Processing movie number {} - {}".format(movie_count,movie))
+
         movielist.append(movie)
 
-        f.seek(0)
-        data = f.readlines()
-        for num, line in enumerate(data):
-            if str(final_list[idx][1]) in line:
-                linedict[final_list[idx][1]].append(num)
+        nl = [m.start() for m in re.finditer("\n", content, re.MULTILINE|re.DOTALL)]
 
-np.save('movie_lines_old1',linedict)
+        imdb_id = int(data[data["primaryTitle"]==movie]["imdb"])
 
-pdb.set_trace()
+        print("IMDB ID is", imdb_id)
+
+        matches = list(re.finditer(r"({})".format(imdb_id), content, re.MULTILINE|re.DOTALL))
+
+        # st, en = bisect.bisect(nl, matches[0].start()-1), bisect.bisect(nl, matches[-1].end()-1)+1
+        # print("Start and end lines are {}, {}".format(st, en))
+
+        # (?# matches = list(re.finditer(r"(new\s+File\(\))", text, re.MULTILINE|re.DOTALL)))
+        # match_count = 0
+        # for m in matches:
+        #     match_count += 1
+        #     r = range(bisect.bisect(nl, m.start()-1), bisect.bisect(nl, m.end()-1)+1)
+        #     print(re.sub(r"\s+", " ", m.group(1), re.DOTALL), "found on line(s)", *r)
+        # print(f"{match_count} occurrences of new File() found in file....")
+
+        # pdb.set_trace()
+
+        line_start = bisect.bisect(nl, matches[0].start()-1)
+        line_end = line_start + len(matches)
+
+        fr_subs = fr_lines[line_start:line_end]
+        en_subs = en_lines[line_start:line_end]
+
+        # print(en_subs)
+        # pdb.set_trace()
+
+        with open('./subs/fr/{}.fr'.format(movie),'wt+', encoding='utf-8') as file:
+            print("Writing English subs for {}".format(movie))
+            for item in en_subs:
+                file.write(item)
+
+        with open('./subs/en/{}.en'.format(movie),'wt+', encoding='utf-8') as file:
+            print("Writing French subs for {}".format(movie))
+            for item in fr_subs:
+                file.write(item)
+
+        print("Wrote {} lines each!".format(len(en_subs)))
+
+en_file.close()
+fr_file.close()
+
+
+
+        # match_count = 0
+        # for m in matches:
+        #     match_count += 1
+        #     r = range(bisect.bisect(nl, m.start()-1), bisect.bisect(nl, m.end()-1)+1)
+        #     st, en = bisect.bisect(nl, m.start()-1), bisect.bisect(nl, m.end()-1)+1
+        #     print(re.sub(r"\s+", " ", m.group(1), re.DOTALL), "found on line(s)", *r)
+        #     break
+        # 
+
+        # for num, line in enumerate(linedata):
+        #     imdb_id = int(data[data["primaryTitle"]==movie]["imdb"])
+        #     if str(imdb_id) in line:
+        #         print("Found line")
+        #         linedict[imdb_id].append(num)
+
+    # np.save('sel_movie_lines',linedict)
